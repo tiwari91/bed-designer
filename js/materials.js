@@ -5,7 +5,7 @@
   if (typeof module === 'object' && module.exports) module.exports = B;
 
   if (typeof require === 'function' && typeof module === 'object') { require('./geometry.js'); require('./nesting.js'); }
-  var IN = B.IN, SHEET_L = B.SHEET_L, SHEET_W = B.SHEET_W, SHEET_M2 = B.SHEET_M2, FINISHES = B.FINISHES, FABRICS = B.FABRICS;
+  var SIZES = B.SIZES, IN = B.IN, SHEET_L = B.SHEET_L, SHEET_W = B.SHEET_W, SHEET_M2 = B.SHEET_M2, FINISHES = B.FINISHES, FABRICS = B.FABRICS;
   var inch = B.inch, faceDims = B.faceDims, edgeLen = B.edgeLen;
   function nest(p, o) { return B.nest(p, o); }
   function fits(a, b) { return (a <= SHEET_L && b <= SHEET_W) || (a <= SHEET_W && b <= SHEET_L); }

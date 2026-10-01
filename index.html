@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Palang Bed Designer</title>
+<meta name="description" content="Design a plywood bed in 3D, get the cutting list, sheet count, cost estimate and a carpenter-ready spec sheet.">
+<meta name="theme-color" content="#f7f3ed" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14110e" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c4573a'/%3E%3Cpath d='M7 9v14M7 18h18v5M7 15h6a3 3 0 0 1 3 3' stroke='%23fff' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  (function () { try { var t = localStorage.getItem('palang.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+</script>
+</head>
+<body class="tab-design">
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Palang, bed designer home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+      <rect width="40" height="40" rx="11" class="logo-bg"/>
+      <path d="M9 11v18M9 22.5h22V29M9 18h7.5a4 4 0 0 1 4 4.5" class="logo-ink"/>
+      <circle cx="13.2" cy="15" r="2.4" class="logo-dot"/>
+    </svg>
+    <span class="brand-text"><span class="brand-name">Palang</span><span class="brand-sub">bed designer</span></span>
+  </a>
+  <div class="top-actions">
+    <button class="btn ghost" id="shareBtn" type="button">
+      <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/></svg>
+      <span>Share</span>
+    </button>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to dark theme">
+      <svg viewBox="0 0 24 24" class="ico sun" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+      <svg viewBox="0 0 24 24" class="ico moon" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage" id="stage" aria-label="3D preview">
+    <div id="viewport" class="viewport"></div>
+    <div class="stage-top">
+      <div class="dim-chip" id="dimChip">…</div>
+    </div>
+    <div class="stage-bottom">
+      <span class="hint" id="hint">Drag to turn · pinch to zoom</span>
+      <div class="stage-btns">
+        <button class="btn float" id="resetView" type="button" aria-label="Reset camera">
+          <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v4.5H8"/></svg>
+        </button>
+        <button class="btn float primary-soft" id="openBtn" type="button" aria-pressed="false">Lift lid</button>
+      </div>
+    </div>
+    <div class="loading" id="loading"><span class="spinner"></span>Loading 3D…</div>
+  </section>
+
+  <aside class="panel">
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="t-design" aria-controls="tab-design" aria-selected="true" data-tab="design">Design</button>
+      <button role="tab" id="t-materials" aria-controls="tab-materials" aria-selected="false" data-tab="materials" tabindex="-1">Materials</button>
+      <button role="tab" id="t-cost" aria-controls="tab-cost" aria-selected="false" data-tab="cost" tabindex="-1">Cost</button>
+    </nav>
+
+    <div class="tab-body" id="tab-design" role="tabpanel" aria-labelledby="t-design">
+      <section class="group">
+        <h2 class="group-title"><span class="step">1</span>Bed size</h2>
+        <div class="chips size-chips" id="sizeChips" role="radiogroup" aria-label="Bed size"></div>
+        <div class="custom-size" id="customSize" hidden>
+          <label class="field"><span>Mattress width</span><span class="num"><input type="number" id="cw" min="30" max="84" step="1" inputmode="numeric"><em>in</em></span></label>
+          <label class="field"><span>Mattress length</span><span class="num"><input type="number" id="cl" min="72" max="84" step="1" inputmode="numeric"><em>in</em></span></label>
+        </div>
+        <div class="row-2">
+          <label class="field slider"><span class="field-head"><span>Bed height</span><output id="hOut"></output></span>
+            <input type="range" id="h" min="14" max="20" step="1" aria-describedby="hHelp"></label>
+        </div>
+        <p class="help" id="hHelp">Floor to the top of the box. The mattress goes on top.</p>
+        <div class="field">
+          <span>Mattress thickness</span>
+          <div class="seg" id="mtSeg" role="radiogroup" aria-label="Mattress thickness"></div>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title"><span class="step">2</span>Storage</h2>
+        <div class="cards" id="storageCards" role="radiogroup" aria-label="Storage"></div>
+        <div class="field" id="lidField">
+          <span>Lid</span>
+          <div class="seg" id="lidSeg" role="radiogroup" aria-label="Lid"></div>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title"><span class="step">3</span>Headboard</h2>
+        <div class="seg seg-wide" id="hbSeg" role="radiogroup" aria-label="Headboard"></div>
+        <label class="field slider" id="hbhField"><span class="field-head"><span>Headboard height</span><output id="hbhOut"></output></span>
+          <input type="range" id="hbh" min="30" max="54" step="1"></label>
+        <div class="field" id="fabField">
+          <span>Fabric</span>
+          <div class="swatches small" id="fabSw" role="radiogroup" aria-label="Fabric colour"></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="tables"><span class="track"><span class="thumb"></span></span><span>Side tables, 450 × 400 mm, one each side</span></label>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title"><span class="step">4</span>Finish</h2>
+        <div class="swatches" id="finishSw" role="radiogroup" aria-label="Laminate finish"></div>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title"><span class="step">5</span>Room &amp; build</h2>
+        <div class="field">
+          <span>Wall colour</span>
+          <div class="swatches small" id="wallSw" role="radiogroup" aria-label="Wall colour"></div>
+        </div>
+        <div class="field">
+          <span>Plywood grade</span>
+          <div class="seg" id="gradeSeg" role="radiogroup" aria-label="Plywood grade"></div>
+          <p class="help" id="gradeHelp"></p>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-body" id="tab-materials" role="tabpanel" aria-labelledby="t-materials" hidden></div>
+    <div class="tab-body" id="tab-cost" role="tabpanel" aria-labelledby="t-cost" hidden></div>
+
+    <footer class="summary-bar">
+      <div class="sum">
+        <strong id="sumSheets">…</strong>
+        <span id="sumCost">…</span>
+      </div>
+      <button class="btn primary" id="sheetBtn" type="button">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>
+        Carpenter sheet
+      </button>
+    </footer>
+  </aside>
+</main>
+
+<section class="sheet-view" id="sheetView" hidden aria-label="Carpenter sheet">
+  <div class="sheet-toolbar">
+    <button class="btn ghost" id="sheetBack" type="button">
+      <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back
+    </button>
+    <div class="sheet-actions">
+      <button class="btn" id="copyText" type="button">Copy as text</button>
+      <button class="btn" id="downloadPng" type="button">Download PNG</button>
+      <button class="btn" id="printBtn" type="button">Print / PDF</button>
+      <button class="btn primary" id="copyLink" type="button">Copy design link</button>
+    </div>
+  </div>
+  <article class="sheet" id="sheet"></article>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.147.0/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/nesting.js"></script>
+<script src="js/materials.js"></script>
+<script src="js/drawings.js"></script>
+<script src="js/textures.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/export.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
