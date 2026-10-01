@@ -99,7 +99,9 @@ try {
   const txt = await page.evaluate(() => window.__bed.text());
   ok(/Cutting list/.test(txt) && /#bed=v1,/.test(txt), 'copy-as-text includes cutting list and design link');
   if (SHOTS) {
-    await page.locator('#sheet').screenshot({ path: path.join(ROOT, 'screenshots/carpenter-sheet.png') });
+    await page.evaluate(() => document.documentElement.classList.add('capture'));
+    await page.screenshot({ path: path.join(ROOT, 'screenshots/carpenter-sheet.png'), fullPage: true });
+    await page.evaluate(() => document.documentElement.classList.remove('capture'));
     const buf = await page.evaluate(async () => {
       const B = window.BedCore; const X = window.BedExport; const b = window.__bed;
       const r = await X.sheetPNG(b.design, b.mats, b.shareURL());

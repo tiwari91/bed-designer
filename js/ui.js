@@ -119,13 +119,14 @@
     var D = design.dims;
     $('dimChip').textContent = B.ftIn(D.W) + ' × ' + B.ftIn(D.L) + ' box · ' + c.h + '″ high';
   }
+  function plural(u, n) { return n === 1 || u === 'm' || u === 'kg' || u === 'm²' || u === 'lump sum' || u === 'box of 100' ? u : u === 'pc' ? 'pcs' : u + 's'; }
   var swCache = {};
   function swatch(k) { if (!swCache[k]) { try { swCache[k] = window.BedTextures.swatchURL(k); } catch (e) { swCache[k] = ''; } } return swCache[k]; }
 
   function renderSummary() {
     var p = mats.ply[18];
-    $('sumSheets').textContent = (p ? p.buy + ' sheet' + (p.buy > 1 ? 's' : '') + ' of 18 mm' : '') + ' · ' + mats.rows.reduce(function (t, r) { return t + r.qty; }, 0) + ' parts';
-    $('sumCost').textContent = 'About ' + B.inr(cost.total) + ' all-in (rough estimate)';
+    $('sumSheets').textContent = '≈ ' + B.inr(cost.total) + ' est.';
+    $('sumCost').textContent = (p ? p.buy + ' × 18 mm sheets · ' : '') + mats.rows.reduce(function (t, r) { return t + r.qty; }, 0) + ' parts';
   }
 
   /* ---------- materials tab */
@@ -174,7 +175,7 @@
       if (l.group !== g) { h += '<div class="cost-group">' + l.group + '</div>'; g = l.group; }
       var isDays = l.key === 'carp';
       h += '<div class="cost-row"><div><div class="lbl">' + B.esc(l.label) + (costState.prices[l.key] == null ? '<span class="est">est.</span>' : '') + '</div><div class="qty">' +
-        (isDays ? '<label class="price days"><input type="number" inputmode="decimal" step="0.5" min="0" data-days value="' + l.qty + '" aria-label="Carpenter days"><span>days</span></label>' : l.qty + ' ' + l.unit) +
+        (isDays ? '<label class="price days"><input type="number" inputmode="decimal" step="0.5" min="0" data-days value="' + l.qty + '" aria-label="Carpenter days"><span>days</span></label>' : l.qty + ' ' + plural(l.unit, l.qty)) +
         ' × <label class="price"><span>₹</span><input type="number" inputmode="decimal" min="0" step="1" data-key="' + l.key + '" value="' + l.price + '" aria-label="Price per ' + l.unit + ' for ' + B.esc(l.label) + '"></label>' + (isDays ? '' : '<span>/' + l.unit + '</span>') +
         (isDays && costState.days != null ? ' <button class="link-btn" data-autodays type="button">use ' + cost.suggestedDays + '</button>' : '') + '</div></div><div class="amt">' + B.inr(l.amount) + '</div></div>';
     });

@@ -4,6 +4,7 @@
   var B = root.BedCore, esc = B.esc;
   var LOGO = '<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#c4573a"/><path d="M9 11v18M9 22.5h22V29M9 18h7.5a4 4 0 0 1 4 4.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13.2" cy="15" r="2.4" fill="#fff"/></svg>';
 
+  function plural(u, n) { return n === 1 || u === 'm' || u === 'kg' || u === 'm²' || u === 'box of 100' ? u : u === 'pc' ? 'pcs' : u + 's'; }
   function today() { try { return new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return ''; } }
   function mmIn(a, b) { return a + ' × ' + b + ' mm'; }
   function inIn(a, b) { return B.inch(a) + ' × ' + B.inch(b); }
@@ -49,7 +50,7 @@
   function matTable(mats) {
     var h = '<div class="table-wrap"><table><thead><tr><th>Item</th><th>Details</th><th class="r">Qty</th></tr></thead><tbody>';
     sheetLines(mats).forEach(function (l) {
-      h += '<tr><td><b>' + esc(l.item) + '</b></td><td>' + esc(l.spec) + '</td><td class="r">' + l.qty + ' ' + esc(l.unit) + '</td></tr>';
+      h += '<tr><td><b>' + esc(l.item) + '</b></td><td>' + esc(l.spec) + '</td><td class="r">' + l.qty + ' ' + esc(plural(l.unit, l.qty)) + '</td></tr>';
     });
     return h + '</tbody></table></div>';
   }
@@ -90,7 +91,7 @@
     });
     L.push('');
     L.push('*Materials*');
-    sheetLines(mats).forEach(function (l) { L.push('• ' + l.item + ': ' + l.qty + ' ' + l.unit + ' (' + l.spec + ')'); });
+    sheetLines(mats).forEach(function (l) { L.push('• ' + l.item + ': ' + l.qty + ' ' + plural(l.unit, l.qty) + ' (' + l.spec + ')'); });
     L.push('');
     L.push('*Notes*');
     B.notes(d, mats).forEach(function (n, i) { L.push((i + 1) + '. ' + n); });
@@ -163,7 +164,7 @@
     h2('Materials & hardware');
     y += 6;
     sheetLines(mats).forEach(function (l) {
-      t(P, y + 13, l.item, 13.5, 700); t(P + 470, y + 13, l.spec, 13, 400, '#5d544b'); t(W - P, y + 13, l.qty + ' ' + l.unit, 13.5, 700, '#1f1b17', 'end');
+      t(P, y + 13, l.item, 13.5, 700); t(P + 470, y + 13, l.spec, 13, 400, '#5d544b'); t(W - P, y + 13, l.qty + ' ' + plural(l.unit, l.qty), 13.5, 700, '#1f1b17', 'end');
       out.push('<rect x="' + P + '" y="' + (y + 22) + '" width="' + (W - 2 * P) + '" height="1" fill="#e3dbcf"/>');
       y += 28;
     });

@@ -36,7 +36,7 @@
   function drawingScale(d, maxWidthPx) {
     var f = extents(d, 'front'), s = extents(d, 'side'), t = extents(d, 'top');
     var W = maxWidthPx || 1040;
-    return Math.min((W - 2 * 2 * 78) / (f.w + s.w), 420 / Math.max(f.h, s.h), (W - 160) / t.w, 560 / t.h);
+    return Math.min((W - 2 * 2 * 78 - 40) / (f.w + s.w), 420 / Math.max(f.h, s.h), (W - 160) / t.w, 560 / t.h);
   }
 
   function view(d, key, scale, opt) {
